@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cajero Automático</title>
+</head>
+<body>
+  <h1>Cajero Automático</h1>
+
+  <div id="login">
+    <h2>Selecciona una cuenta:</h2>
+    <select id="accountSelect">
+      <option value="1">Cuenta 1</option>
+      <option value="2">Cuenta 2</option>
+      <option value="3">Cuenta 3</option>
+    </select>
+    <br>
+    <input type="password" id="passwordInput" placeholder="Ingresa el password">
+    <br>
+    <button onclick="login()">Ingresar</button>
+    <p id="loginMessage"></p>
+  </div>
+
+  <div id="operations" style="display: none;">
+    <h2>Opciones disponibles:</h2>
+    <button onclick="checkBalance()">Consultar saldo</button>
+    <br>
+    <input type="number" id="amountInput" placeholder="Ingresa el monto">
+    <br>
+    <button onclick="deposit()">Ingresar monto</button>
+    <br>
+    <button onclick="withdraw()">Retirar monto</button>
+    <p id="operationMessage"></p>
+  </div>
+
+  <script>
+    // Datos de las cuentas
+    var accounts = [
+      { id: 1, password: "1234", balance: 500 },
+      { id: 2, password: "5678", balance: 1000 },
+      { id: 3, password: "9012", balance: 200 }
+    ];
+
+    var selectedAccount = null;
+
+    function login() {
+      var accountId = document.getElementById("accountSelect").value;
+      var password = document.getElementById("passwordInput").value;
+
+      // Buscar la cuenta seleccionada
+      selectedAccount = accounts.find(function(account) {
+        return account.id == accountId;
+      });
+
+      if (selectedAccount && selectedAccount.password === password) {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("operations").style.display = "block";
+      } else {
+        document.getElementById("loginMessage").textContent = "Password incorrecto. Intenta nuevamente.";
+      }
+    }
+
+    function checkBalance() {
+      var balance = selectedAccount.balance;
+      document.getElementById("operationMessage").textContent = "Saldo actual: $" + balance;
+    }
+
+    function deposit() {
+      var amount = parseFloat(document.getElementById("amountInput").value);
+
+      if (isNaN(amount) || amount <= 0) {
+        document.getElementById("operationMessage").textContent = "Ingresa un monto válido.";
+        return;
+      }
+
+      var newBalance = selectedAccount.balance + amount;
+
+      if (newBalance > 990) {
+        document.getElementById("operationMessage").textContent = "El monto excede el límite máximo permitido.";
+        return;
+      }
+
+      selectedAccount.balance = newBalance;
+      document.getElementById("operationMessage").textContent = "Monto ingresado: $" + amount + ". Nuevo saldo: $" + newBalance;
+    }
+
+    function withdraw() {
+      var amount = parseFloat(document.getElementById("amountInput").value);
+
+      if (isNaN(amount) || amount <= 0) {
+        document.getElementById("operationMessage").textContent = "Ingresa un monto válido.";
+        return;
+      }
+
+      var newBalance = selectedAccount.balance - amount;
+
+      if (newBalance < 10) {
+        document.getElementById("operationMessage").textContent = "El monto excede el límite mínimo permitido.";
+        return;
+      }
+
+      selectedAccount.balance = newBalance;
+      document.getElementById("operationMessage").textContent = "Monto retirado: $" + amount + ". Nuevo saldo: $" + newBalance;
+    }
+  </script>
+</body>
+</html>
